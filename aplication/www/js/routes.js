@@ -2,42 +2,36 @@ angular.module('app.routes', [])
 
 .config(function($stateProvider, $urlRouterProvider) {
 
-  // Ionic uses AngularUI Router which uses the concept of states
-  // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
   $stateProvider
-    
-  
 
-      .state('menuPrincipal', {
+    .state('mainMenu', {
     url: '/index',
-    templateUrl: 'templates/menuPrincipal.html',
-    controller: 'menuPrincipalCtrl'
+    templateUrl: 'templates/mainMenu.html',
+    controller: 'mainMenuCtrl'
   })
 
-  .state('elegirTemas', {
+  .state('chooseTopics', {
     url: '/topics',
-    templateUrl: 'templates/elegirTemas.html',
-    controller: 'elegirTemasCtrl'
+    templateUrl: 'templates/chooseTopics.html',
+    controller: 'chooseTopicsCtrl'
   })
 
-  .state('esperandoEquipo', {
+  .state('waitingTeam', {
     url: '/page3',
-    templateUrl: 'templates/esperandoEquipo.html',
-    controller: 'esperandoEquipoCtrl'
+    templateUrl: 'templates/waitingTeam.html',
+    controller: 'waitingTeamCtrl'
   })
 
-  .state('jugando', {
+  .state('playing', {
     url: '/playing',
-    templateUrl: 'templates/jugando.html',
-    controller: 'jugandoCtrl'
+    templateUrl: 'templates/playing.html',
+    controller: 'playingCtrl'
   })
 
-  .state('resultados', {
+  .state('positions', {
     url: '/positions',
-    templateUrl: 'templates/resultados.html',
-    controller: 'resultadosCtrl'
+    templateUrl: 'templates/positions.html',
+    controller: 'positionsCtrl'
   })
 
   .state('ayuda', {
@@ -46,8 +40,8 @@ angular.module('app.routes', [])
     controller: 'ayudaCtrl'
   })
 
-$urlRouterProvider.otherwise('/index')
+  $urlRouterProvider.otherwise('/index')
 
-  
+
 
 });
