@@ -2,41 +2,7 @@ angular.module('app.controllers', [])
 
 .controller('mainMenuCtrl', ['$scope', '$stateParams', '$rootScope',
   function($scope, $stateParams, $rootScope) {
-    $scope.createScopes = function() {
-      //Declaracion de equipos
-      $rootScope.teams = [{
-          name: 'Azul',
-          score: 0
-        }, {
-          name: 'Rojo',
-          score: 0
-        }]
-        //Declaracion de rondas
-      $rootScope.teamsPlays = [{
-        team: $rootScope.teams[0],
-        round: 0,
-        played: false,
-      }, {
-        team: $rootScope.teams[1],
-        round: 0,
-        played: false,
-      }, {
-        team: $rootScope.teams[0],
-        round: 1,
-        played: false,
-      }, {
-        team: $rootScope.teams[1],
-        round: 1,
-        played: false,
-      }, {
-        team: $rootScope.teams[0],
-        round: 2,
-        played: false,
-      }, {
-        team: $rootScope.teams[1],
-        round: 2,
-        played: false,
-      }];
+    $scope.mainMenuLoaded = function() {
       //Declaracion de Temas
       $rootScope.topics = [{
         name: 'Personajes',
@@ -133,40 +99,100 @@ angular.module('app.controllers', [])
         description: 'Ciudad Rusa',
         bannedWords: ['Radiación', 'Planta Nuclear', 'Fantasma']
       }];
-      //Declaracion de las palabras en juego
-      $rootScope.playingWords = [];
-      //Declaracion de las respuestas incorrectas en juego
-      $rootScope.wrongAswers = [];
       //Declaracion de la funcion getRandom()
       $rootScope.getRandom = function(maxExclusive, minInclusive = 0) {
         randomNum = Math.floor(Math.random() * (maxExclusive - minInclusive) + minInclusive);
         return (randomNum);
-      }
-    }
+      };
+      //Declaracion de la funcion que decide que Round se debe jugar
+      $rootScope.getRound = function() {
+        try {
+          if ($rootScope.playingWords[0] != undefined) {
+            for (p = 0; p < $rootScope.roundsPlays.length; p++) {
+              if (!$rootScope.roundsPlays[p]['played']) {
+                return ($rootScope.roundsPlays[p]);
+              }
+            }
+          } else {
+            return (null);
+          }
+        } catch (isUndefined) {
+          //Declaracion de las palabras en juego
+          $rootScope.playingWords = [];
+          for (p = 0; p < $rootScope.roundsPlays.length; p++) {
+            if (!$rootScope.roundsPlays[p]['played']) {
+              return ($rootScope.roundsPlays[p]);
+            }
+          }
+        }
+      };
+    };
   }
 ])
 
 .controller('chooseTopicsCtrl', ['$scope', '$stateParams', '$rootScope',
   function($scope, $stateParams, $rootScope) {
+    $scope.loaded = function() {
+      //Declaracion de equipos
+      $rootScope.teams = [{
+        name: 'Azul',
+        score: 0
+      }, {
+        name: 'Rojo',
+        score: 0
+      }];
+      //Declaracion de rondas
+      $rootScope.roundsPlays = [{
+        team: $rootScope.teams[0],
+        round: 0,
+        played: false,
+      }, {
+        team: $rootScope.teams[1],
+        round: 0,
+        played: false,
+      }, {
+        team: $rootScope.teams[0],
+        round: 1,
+        played: false,
+      }, {
+        team: $rootScope.teams[1],
+        round: 1,
+        played: false,
+      }, {
+        team: $rootScope.teams[0],
+        round: 2,
+        played: false,
+      }, {
+        team: $rootScope.teams[1],
+        round: 2,
+        played: false,
+      }];
+    };
     //Seleccion de Temas
     $scope.clicked = function(selection) {
       value = selection['selected'];
       selection['selected'] = !value;
-    }
+    };
   }
 ])
 
-.controller('waitingTeamCtrl', ['$scope', '$stateParams', '$rootScope',
-  function($scope, $stateParams, $rootScope) {
-
+.controller('waitingTeamCtrl', ['$scope', '$stateParams', '$rootScope', '$state',
+  function($scope, $stateParams, $rootScope, $state) {
+    //Declaracion de currentRound
+    $scope.waitingTeamLoad = function() {
+      nextRound = $rootScope.getRound();
+      if (nextRound == null) {
+        $state.go('positions');
+      } else {
+        $rootScope.currentRound = nextRound;
+      }
+    };
   }
 ])
 
 .controller('playingCtrl', ['$scope', '$stateParams', '$rootScope', '$timeout', '$state',
   function($scope, $stateParams, $rootScope, $timeout, $state) {
-    //Declaracion de Funciones del cronometro
-    var mytimeout = null;
-    $scope.counter = 30;
+    //Declaracion de Funciones del countdown
     $scope.onTimeout = function() {
       if ($scope.counter === 1) {
         $scope.$broadcast('timer-stopped', 0);
@@ -179,7 +205,12 @@ angular.module('app.controllers', [])
 
     $scope.$on('timer-stopped', function(event, remaining) {
       if (remaining === 0) {
-        $state.go('positions');
+        $rootScope.currentRound['played'] = true;
+        $state.go('waitingTeam');
+        for (m = 0; m < $rootScope.playingWords.length; m++) {
+          $rootScope.wrongAswers.push($rootScope.playingWords[m]);
+        }
+        $rootScope.playingWords = $rootScope.wrongAswers;
       }
     });
     //Declaracion de la funcion chargeCard()
@@ -188,33 +219,41 @@ angular.module('app.controllers', [])
       $scope.current = $rootScope.playingWords[x];
     }
     //Declaracion de la funcion que se ejecuta al comenzar la partida
-    $scope.gameStarted = function() {
-        for (u = 0; u < $rootScope.topics.length; u++) {
-          if ($rootScope.topics[u]['selected']) {
-            for (i = 0; i < $rootScope.words.length; i++) {
-              if ($rootScope.topics[u]['type'] == $rootScope.words[i]['type']) {
-                $rootScope.playingWords.push($rootScope.words[i]);
-              }
+    $scope.playingLoad = function() {
+      //Declaracion de las respuestas incorrectas en juego
+      $rootScope.wrongAswers = [];
+      var mytimeout = null;
+      $scope.counter = 30;
+      for (u = 0; u < $rootScope.topics.length; u++) {
+        if ($rootScope.topics[u]['selected']) {
+          for (i = 0; i < $rootScope.words.length; i++) {
+            if ($rootScope.topics[u]['type'] == $rootScope.words[i]['type']) {
+              $rootScope.playingWords.push($rootScope.words[i]);
             }
           }
         }
-        chargeCard($rootScope.playingWords);
-        mytimeout = $timeout($scope.onTimeout, 1000);
       }
-      //Declaracion de la funcion de cargar otra tarjeta nextCard()
+      chargeCard($rootScope.playingWords);
+      mytimeout = $timeout($scope.onTimeout, 1000);
+    };
+    //Declaracion de la funcion de cargar otra tarjeta nextCard()
     $scope.nextCard = function(answerBoolean) {
       currentWord = $rootScope.playingWords.indexOf($scope.current);
       $rootScope.playingWords.splice(currentWord, 1);
       if (answerBoolean) {
-        $rootScope.teams[0]['score']++;
+        $rootScope.currentRound['team']['score']++;
       } else {
         $rootScope.wrongAswers.push($scope.current);
       }
       if ($rootScope.playingWords.length == 0) {
-        $state.go('positions');
+        $rootScope.currentRound['played'] = true;
+        $rootScope.playingWords = $rootScope.wrongAswers;
+        $rootScope.wrongAswers = [];
+        $state.go('waitingTeam');
+      } else {
+        chargeCard($rootScope.playingWords);
       }
-      chargeCard($rootScope.playingWords);
-    }
+    };
   }
 ])
 

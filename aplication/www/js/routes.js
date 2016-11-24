@@ -7,25 +7,29 @@ angular.module('app.routes', [])
     .state('mainMenu', {
     url: '/index',
     templateUrl: 'templates/mainMenu.html',
-    controller: 'mainMenuCtrl'
+    controller: 'mainMenuCtrl',
+    cache: false,
   })
 
   .state('chooseTopics', {
     url: '/chooseTopics',
     templateUrl: 'templates/chooseTopics.html',
-    controller: 'chooseTopicsCtrl'
+    controller: 'chooseTopicsCtrl',
+    cache: false,
   })
 
   .state('waitingTeam', {
     url: '/waitingTeam',
     templateUrl: 'templates/waitingTeam.html',
-    controller: 'waitingTeamCtrl'
+    controller: 'waitingTeamCtrl',
+    cache: false,
   })
 
   .state('playing', {
     url: '/playing',
     templateUrl: 'templates/playing.html',
-    controller: 'playingCtrl'
+    controller: 'playingCtrl',
+    cache: false,
   })
 
   .state('positions', {
