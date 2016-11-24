@@ -107,23 +107,31 @@ angular.module('app.controllers', [])
       //Declaracion de la funcion que decide que Round se debe jugar
       $rootScope.getRound = function() {
         try {
-          if ($rootScope.playingWords[0] != undefined) {
+          if ($rootScope.playingWords[0] == undefined) {
+            return (false);
+          } else {
             for (p = 0; p < $rootScope.roundsPlays.length; p++) {
               if (!$rootScope.roundsPlays[p]['played']) {
-                return ($rootScope.roundsPlays[p]);
+                $rootScope.currentRound = $rootScope.roundsPlays[p];
+
+                return (true);
               }
             }
-          } else {
-            return (null);
           }
         } catch (isUndefined) {
           //Declaracion de las palabras en juego
           $rootScope.playingWords = [];
-          for (p = 0; p < $rootScope.roundsPlays.length; p++) {
-            if (!$rootScope.roundsPlays[p]['played']) {
-              return ($rootScope.roundsPlays[p]);
+          for (u = 0; u < $rootScope.topics.length; u++) {
+            if ($rootScope.topics[u]['selected']) {
+              $rootScope.currentRound = $rootScope.roundsPlays[0];
+              for (i = 0; i < $rootScope.words.length; i++) {
+                if ($rootScope.topics[u]['type'] == $rootScope.words[i]['type']) {
+                  $rootScope.playingWords.push($rootScope.words[i]);
+                }
+              }
             }
           }
+          return(true);
         }
       };
     };
@@ -180,11 +188,8 @@ angular.module('app.controllers', [])
   function($scope, $stateParams, $rootScope, $state) {
     //Declaracion de currentRound
     $scope.waitingTeamLoad = function() {
-      nextRound = $rootScope.getRound();
-      if (nextRound == null) {
+      if (!$rootScope.getRound()) {
         $state.go('positions');
-      } else {
-        $rootScope.currentRound = nextRound;
       }
     };
   }
@@ -215,8 +220,13 @@ angular.module('app.controllers', [])
     });
     //Declaracion de la funcion chargeCard()
     function chargeCard(targetArray) {
-      x = $rootScope.getRandom($rootScope.playingWords.length);
-      $scope.current = $rootScope.playingWords[x];
+      if ($rootScope.playingWords.length != 0) {
+        x = $rootScope.getRandom($rootScope.playingWords.length);
+        $scope.current = $rootScope.playingWords[x];
+        return true;
+      } else {
+        return false;
+      }
     }
     //Declaracion de la funcion que se ejecuta al comenzar la partida
     $scope.playingLoad = function() {
@@ -224,15 +234,6 @@ angular.module('app.controllers', [])
       $rootScope.wrongAswers = [];
       var mytimeout = null;
       $scope.counter = 30;
-      for (u = 0; u < $rootScope.topics.length; u++) {
-        if ($rootScope.topics[u]['selected']) {
-          for (i = 0; i < $rootScope.words.length; i++) {
-            if ($rootScope.topics[u]['type'] == $rootScope.words[i]['type']) {
-              $rootScope.playingWords.push($rootScope.words[i]);
-            }
-          }
-        }
-      }
       chargeCard($rootScope.playingWords);
       mytimeout = $timeout($scope.onTimeout, 1000);
     };
@@ -245,13 +246,11 @@ angular.module('app.controllers', [])
       } else {
         $rootScope.wrongAswers.push($scope.current);
       }
-      if ($rootScope.playingWords.length == 0) {
+      if (!chargeCard($rootScope.playingWords)) {
         $rootScope.currentRound['played'] = true;
         $rootScope.playingWords = $rootScope.wrongAswers;
         $rootScope.wrongAswers = [];
         $state.go('waitingTeam');
-      } else {
-        chargeCard($rootScope.playingWords);
       }
     };
   }
