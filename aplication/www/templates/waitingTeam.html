@@ -1,7 +1,7 @@
 <ion-view title="Esperando Equipo" ng-init="waitingTeamLoad()">
   <ion-content class="has-header" padding="true">
-    <h1 style="color: rgb(0, 0, 0); text-align: center;">Esperando al equipo {{ currentRound.team.name }}</h1>
-    <h2 style="color: rgb(0, 0, 0); text-align: center;">Round: {{ currentRound.round }}</h2>
+    <h1 style="color: rgb(0, 0, 0); text-align: center;">Esperando al equipo {{ currentRound.team.name }}...</h1>
+    <h2 style="color: rgb(0, 0, 0); text-align: center;">Round: {{ currentRound.round + 1 }}</h2>
     <a class="button button-positive  button-block" ui-sref="playing">Listos</a>
   </ion-content>
 </ion-view>
