@@ -1,15 +1,15 @@
-<ion-view id="pagePositions" title="Resultados">
+<ion-view title="Resultados">
   <ion-content class="has-header" padding="true">
-    <div id="containerPositions">
-      <ion-list id="listPositions">
-        <ion-item>Equipo
-          <span class="item-note">Puntos</span>
+    <div>
+      <ion-list ng-repeat="team in teams">
+        <ion-item>{{ team.name }}
+          <span class="item-note"> {{team.score}} Puntos</span>
         </ion-item>
       </ion-list>
     </div>
-    <div class="button-bar" id="buttonbarPositions">
-      <a class="button button-assertive  button-block" id="btnMenu" ui-sref="mainMenu">Volver al menú</a>
-      <a class="button button-balanced  button-block" id="btnPlayAgain" ui-sref="chooseTopics">Revancha</a>
+    <div class="button-bar">
+      <a class="button button-assertive  button-block" ui-sref="mainMenu">Volver al menú</a>
+      <a class="button button-balanced  button-block" ui-sref="chooseTopics">Revancha</a>
     </div>
   </ion-content>
 </ion-view>

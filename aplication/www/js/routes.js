@@ -11,13 +11,13 @@ angular.module('app.routes', [])
   })
 
   .state('chooseTopics', {
-    url: '/topics',
+    url: '/chooseTopics',
     templateUrl: 'templates/chooseTopics.html',
     controller: 'chooseTopicsCtrl'
   })
 
   .state('waitingTeam', {
-    url: '/page3',
+    url: '/waitingTeam',
     templateUrl: 'templates/waitingTeam.html',
     controller: 'waitingTeamCtrl'
   })
@@ -34,10 +34,10 @@ angular.module('app.routes', [])
     controller: 'positionsCtrl'
   })
 
-  .state('ayuda', {
+  .state('help', {
     url: '/help',
-    templateUrl: 'templates/ayuda.html',
-    controller: 'ayudaCtrl'
+    templateUrl: 'templates/help.html',
+    controller: 'helpCtrl'
   })
 
   $urlRouterProvider.otherwise('/index')

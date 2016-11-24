@@ -1,26 +1,28 @@
-<ion-view id="pagePlaying" title="Jugando">
+<ion-view title="Jugando" ng-init="gameStarted()">
   <ion-content class="has-header" padding="true">
     <ion-list>
-      <ion-item>30</ion-item>
+      <ion-item class="chronometer positive"><font size="250%">{{ counter }}</font></ion-item>
     </ion-list>
-    <div id="containerWords">
+    <div>
       <ion-list>
         <ion-item class="item-icon-left">
-          <i class="icon ion-ionic"></i>Palabra Adivinar</ion-item>
+          <i class="{{ current.icon }}"></i>{{ current.name }}
+          <span class="item-note">{{ current.description }}</span>
+        </ion-item>
       </ion-list>
     </div>
     <div style="width: 290px; height: 39px;" class="spacer"></div>
-    <div id="playing-container4">
+    <div>
       <ion-list>
-        <ion-item class="item-icon-left assertive">
-          <i class="icon ion-alert"></i>No puedo decir esto
+        <ion-item class="item-icon-left assertive" ng-repeat="banned in current.bannedWords">
+          <i class="icon ion-alert"></i>{{ banned }}
           <span class="item-note">Palabra Prohibida</span>
         </ion-item>
       </ion-list>
     </div>
-    <div class="button-bar" id="buttonbarPlaying">
-      <button class="button button-assertive  button-block" id="btnCorrect">Incorrecto</button>
-      <button class="button button-balanced  button-block" id="btnWrong">Correcto</button>
+    <div class="button-bar">
+      <button class="button button-assertive  button-block" ng-click="nextCard(false)">Incorrecto</button>
+      <button class="button button-balanced  button-block" ng-click="nextCard(true)">Correcto</button>
     </div>
   </ion-content>
 </ion-view>

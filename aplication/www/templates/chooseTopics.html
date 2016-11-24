@@ -1,11 +1,11 @@
-<ion-view id="pageChooseTopics" title="Elegir Temas">
+<ion-view title="Elegir Temas">
   <ion-content class="has-header" padding="true">
-    <div id="chooseTopics-container2">
-      <ion-list id="chooseTopics-list2">
-        <ion-item id="chooseTopics-list-item1" class="item-icon-left">
-          <i class="icon ion-ionic"></i>Item</ion-item>
+    <div>
+      <ion-list>
+        <ion-item ng-repeat="topic in topics"  ng-click="clicked(topic)" ng-class="{ active: topic.selected }" class="item-icon-left">
+          <i class="{{ topic.icon }}"></i>{{ topic.name }}</ion-item>
       </ion-list>
     </div>
-    <a class="button button-balanced  button-block" id="chooseTopics-button3" ui-sref="waitingTeam">Jugar</a>
+    <a class="button button-balanced  button-block" ui-sref="waitingTeam">Jugar</a>
   </ion-content>
 </ion-view>
